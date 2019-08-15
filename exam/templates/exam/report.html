@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>report</title>
+</head>
+<body>
+    <div style="text-align:center;">
+        <div style=" width: 700px; display:inline-block; text-align:left;">
+            <h1>{{test.certificate.name}} {{test}} 채점결과</h1>
+
+                {% for question_set in report.o %}
+                    <p style="margin-bottom:100px;">
+                        <p>{{question_set.question.question_num}}. {{question_set.question.contents}}</p>
+
+                        {% if question_set.question.img %}
+                            <p>
+                                <img src="{{question_set.question.img.url}}">
+                            </p>
+                        {% endif %}
+
+                        {% for choice in question_set.choices %}
+                            <p style="padding-left:20px;">
+                                <input id="{{question_set.question.question_num}}n{{choice.choice_num}}" type="radio" name="{{question_set.question.question_num}}" value="{{choice.choice_num}}"
+                                checked disabled>
+                                <label for="{{question_set.question.question_num}}n{{choice.choice_num}}">
+                                    {{choice.choice_num}}. {{choice.contents}}
+                                    {% if choice.img %} <img src="{{choice.img.url}}"> {% endif %}
+                                </label>
+                            </p>
+
+                        {% endfor %}
+                    </p>
+                {% endfor %}
+
+        </div>
+    </div>
+</body>
+</html>

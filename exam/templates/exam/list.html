@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>list</title>
+</head>
+<body>
+<select id="list">
+    <option value="">선택</option>
+    {% for val in list %}
+        <option value="{{val.get_absolute_url}}">{{val}}</option>
+    {% endfor %}
+</select>
+<button href="#" onclick="location.href = get_selected_val()">다음으로</button>
+<script type="text/javascript">
+    function get_selected_val(){
+        var target = document.getElementById("list");
+        return target.options[target.selectedIndex].value;
+    }
+</script>
+</body>
+</html>
