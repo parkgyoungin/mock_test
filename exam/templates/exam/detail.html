@@ -1,42 +1,49 @@
-<!DOCTYPE html>
-{% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>detail</title>
-</head>
-<body>
-    <div style="text-align:center;">
-        <div style=" width: 700px; display:inline-block; text-align:left;">
-            <h1>{{test.certificate.name}} {{test}}</h1>
-            <form method="post" action="{% url 'exam:report' test.id %}">
-                {%csrf_token%}
-                {% for question_set in question_sets %}
-                    <p style="margin-bottom:100px;">
-                        <p>{{question_set.question.question_num}}. {{question_set.question.contents}}</p>
+{% extends 'base.html' %}
 
-                        {% if question_set.question.img %}
-                            <p>
-                                <img src="{{question_set.question.img.url}}">
-                            </p>
-                        {% endif %}
+{% block content %}
 
-                        {% for choice in question_set.choices %}
-                            <p style="padding-left:20px;">
-                                <input id="{{question_set.question.question_num}}n{{choice.choice_num}}" type="radio" name="{{question_set.question.question_num}}" value="{{choice.choice_num}}">
-                                <label for="{{question_set.question.question_num}}n{{choice.choice_num}}">
-                                    {{choice.choice_num}}. {{choice.contents}}
-                                    {% if choice.img %} <img src="{{choice.img.url}}"> {% endif %}
-                                </label>
-                            </p>
+<h1>{{test.certificate.name}} {{test}}</h1>
+<ul class="nav nav-tabs">
+    {% for subject in subjects %}
+        <li class="nav-item">
+        <a class="nav-link {%if subject.order is 1%}active{%endif%}" data-toggle="tab" href="#tab{{subject.order}}">{{subject.order}}.{{subject.name}}</a>
+        </li>
+    {% endfor %}
+</ul>
 
-                        {% endfor %}
-                    </p>
-                {% endfor %}
-                <button type="submit">채점하기</button>
-            </form>
+<form method="post" action="{% url 'exam:report' test.id %}">
+    {%csrf_token%}
+        <div class="tab-content">
+            {% for subject in subjects %}
+                <div class="tab-pane fade {% if subject.order is 1 %}show active{% endif %}" id="tab{{subject.order}}">
+                    {% for question_set in subject.question_sets %}
+                        <p style="margin-bottom:100px;">
 
+                            <!--문제내용-->
+                            <p>{{question_set.question.question_num}}. {{question_set.question.contents}}</p>
+
+                            <!--그림있으면 그림-->
+                            {% if question_set.question.img %} <p><img src="{{question_set.question.img.url}}"></p> {% endif %}
+
+                            <!--선택지-->
+                            {% for choice in question_set.choices %}
+                                <p style="padding-left:20px;">
+
+                                        <input id="{{question_set.question.question_num}}n{{choice.choice_num}}" type="radio"
+                                               name="{{question_set.question.question_num}}" value="{{choice.choice_num}}">
+                                        <label for="{{question_set.question.question_num}}n{{choice.choice_num}}">
+                                            {{choice.choice_num}}. {{choice.contents}} {% if choice.img %} <img src="{{choice.img.url}}"> {% endif %}
+                                        </label>
+
+                                </p>
+                            {% endfor %}
+
+                        </p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
         </div>
-    </div>
-</body>
-</html>
+    <button type="submit">채점하기</button>
+</form>
+
+{% endblock %}
