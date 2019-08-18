@@ -2,89 +2,23 @@
 
 {% block content %}
     <h1>{{test.certificate.name}} {{test}} 채점결과</h1>
-    <h2>{{report.result}}</h2>
+    <h2>{{test.point}}</h2>
     <h2 style="color:blue; margin-top:100px;">여기서부턴 맞춘문제 입니다.</h2>
-    {% for question_set in report.o %}
-        <p style="margin-bottom:100px;">
-            <p>{{question_set.question.question_num}}. {{question_set.question.contents}}
-                <span style="color:blue; text-weight:bold;">정답{{question_set.question.get_answer}}</span></p>
-
-            {% if question_set.question.img %}
-                <p>
-                    <img src="{{question_set.question.img.url}}">
-                </p>
-            {% endif %}
-
-            {% for choice in question_set.choices %}
-                <p style="padding-left:20px;">
-                    <input id="{{question_set.question.question_num}}n{{choice.choice_num}}" type="radio" name="{{question_set.question.question_num}}" value="{{choice.choice_num}}"
-                    {% if choice.choice_num == question_set.checked %} checked  {% endif %} disabled>
-
-                    <label for="{{question_set.question.question_num}}n{{choice.choice_num}}">
-                        {{choice.choice_num}}. {{choice.contents}}
-                        {% if choice.img %} <img src="{{choice.img.url}}"> {% endif %}
-                    </label>
-                </p>
-
-            {% endfor %}
-        </p>
+    {% for question in test.o %}
+        {% include 'checked_question.html' %}
     {% endfor %}
 
     <h2 style="color:red; margin-top:100px;">여기서부턴 틀린문제 입니다.</h2>
-    {% for question_set in report.x %}
-        {% if question_set.checked %}
-            <p style="margin-bottom:100px;">
-                <p>{{question_set.question.question_num}}. {{question_set.question.contents}}
-                    <span style="color:red; text-weight:bold;">정답{{question_set.question.get_answer}}</span></p>
-
-                {% if question_set.question.img %}
-                    <p>
-                        <img src="{{question_set.question.img.url}}">
-                    </p>
-                {% endif %}
-
-                {% for choice in question_set.choices %}
-                    <p style="padding-left:20px;">
-                        <input id="{{question_set.question.question_num}}n{{choice.choice_num}}" type="radio" name="{{question_set.question.question_num}}" value="{{choice.choice_num}}"
-                        {% if choice.choice_num == question_set.checked %} checked  {% endif %} disabled>
-
-                        <label for="{{question_set.question.question_num}}n{{choice.choice_num}}">
-                            {{choice.choice_num}}. {{choice.contents}}
-                            {% if choice.img %} <img src="{{choice.img.url}}"> {% endif %}
-                        </label>
-                    </p>
-
-                {% endfor %}
-            </p>
+    {% for question in test.x %}
+        {% if question.checked %}
+            {% include 'checked_question.html' %}
         {% endif %}
     {% endfor %}
 
     <h2 style="color:red; margin-top:100px;">여기서부턴 풀지않은 문제 입니다.</h2>
-    {% for question_set in report.x %}
-        {% if not question_set.checked %}
-            <p style="margin-bottom:100px;">
-                <p>{{question_set.question.question_num}}. {{question_set.question.contents}}
-                    <span style="color:red; text-weight:bold;">정답{{question_set.question.get_answer}}</span></p>
-
-                {% if question_set.question.img %}
-                    <p>
-                        <img src="{{question_set.question.img.url}}">
-                    </p>
-                {% endif %}
-
-                {% for choice in question_set.choices %}
-                    <p style="padding-left:20px;">
-                        <input id="{{question_set.question.question_num}}n{{choice.choice_num}}" type="radio" name="{{question_set.question.question_num}}" value="{{choice.choice_num}}"
-                        {% if choice.choice_num == question_set.checked %} checked  {% endif %} disabled>
-
-                        <label for="{{question_set.question.question_num}}n{{choice.choice_num}}">
-                            {{choice.choice_num}}. {{choice.contents}}
-                            {% if choice.img %} <img src="{{choice.img.url}}"> {% endif %}
-                        </label>
-                    </p>
-
-                {% endfor %}
-            </p>
+    {% for question in test.x %}
+        {% if not question.checked %}
+            {% include 'checked_question.html' %}
         {% endif %}
     {% endfor %}
 

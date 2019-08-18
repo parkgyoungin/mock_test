@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<select id="select_box">
+    <option value="">선택</option>
+    {% for val in select_box %}
+        <option name="{{val.get_absolute_url}}" value="{{val.get_absolute_url}}">{{val}}</option>
+    {% endfor %}
+</select>
+<form method="get" onsubmit="get_url()" id="frm">
+    {% for subject in check_box %}
+        <div class="custom-control custom-checkbox">
+            <input id="{{subject.order}}" type="checkbox" checked
+               name="{{subject.order}}" value="true" class="custom-control-input">
+            <label for="{{subject.order}}" class="custom-control-label">
+            {{subject.order}}. {{subject.name}}
+            </label>
+        </div>
+    {% endfor %}
+    <button onclick="">다음으로</button>
+</form>
+<script type="text/javascript">
+    function get_selected_val(){
+        var target = document.getElementById("select_box");
+        return target.options[target.selectedIndex].value;
+    }
+
+    function get_url(){
+        var f = document.getElementById("frm");
+        f.action = get_selected_val()
+    }
+</script>
+
+{% endblock %}

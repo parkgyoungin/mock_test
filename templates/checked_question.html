@@ -1,0 +1,26 @@
+<p style="margin-bottom:100px;">
+    <p>{{question.question_num}}. {{question.contents}}
+
+        <span style="color:blue; text-weight:bold;">정답{{question.get_answer}}</span></p>
+
+    {% if question.img %}
+        <p>
+            <img src="{{question_set.question.img.url}}">
+        </p>
+    {% endif %}
+
+    {% for choice in question.choices.all %}
+        <p style="padding-left:20px;">
+            <div class="custom-control custom-radio">
+                <input id="{{question.question_num}}n{{choice.choice_num}}" type="radio" name="{{question.question_num}}" value="{{choice.choice_num}}"
+                {% if choice.choice_num == question.checked %} checked  {% endif %} disabled class="custom-control-input">
+
+                <label for="{{question.question_num}}n{{choice.choice_num}}" class="custom-control-label">
+                    {{choice.choice_num}}. {{choice.contents}}
+                    {% if choice.img %} <img src="{{choice.img.url}}"> {% endif %}
+                </label>
+            </div>
+        </p>
+
+    {% endfor %}
+</p>

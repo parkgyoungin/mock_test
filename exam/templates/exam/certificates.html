@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="text-align:center; ">
+    <select id="select_box">
+        <option value="">선택</option>
+        {% for val in select_box %}
+            <option value="{{val.get_absolute_url}}">{{val}}</option>
+        {% endfor %}
+    </select>
+    <button href="#" onclick="location.href = get_selected_val()">다음으로</button>
+    <script type="text/javascript">
+        function get_selected_val(){
+            var target = document.getElementById("select_box");
+            return target.options[target.selectedIndex].value;
+        }
+    </script>
+</div>
+
+{% endblock %}

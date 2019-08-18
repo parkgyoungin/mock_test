@@ -23,6 +23,10 @@ class Subject(models.Model):
     def __str__(self):
         return self.certificate.name + '_' + str(self.order) + '_' + self.name
 
+    def range(self):
+        return [20*(self.order-1)+1, 20*self.order]
+
+
 class Test(models.Model):
     certificate = models.ForeignKey(Certificate, on_delete=models.CASCADE, related_name='tests')
     year = models.PositiveIntegerField()
@@ -33,6 +37,7 @@ class Test(models.Model):
 
     def get_absolute_url(self):
         return reverse('exam:detail', args=[self.id])
+
 
 class Question(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='questions')
@@ -48,6 +53,7 @@ class Question(models.Model):
         special_characters=['①','②','③','④']
         return special_characters[self.answer-1]
 
+
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='choices')
     choice_num = models.PositiveIntegerField()
@@ -56,3 +62,5 @@ class Choice(models.Model):
 
     def __str__(self):
         return str(self.question_id) + " 보기{}".format(self.choice_num)
+
+

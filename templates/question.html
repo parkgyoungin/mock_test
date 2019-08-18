@@ -1,0 +1,22 @@
+<p style="margin-bottom:100px;">
+
+    <!--문제내용-->
+    <p>{{question.question_num}}. {{question.contents}}</p>
+
+    <!--그림있으면 그림-->
+    {% if question.img %} <p><img src="{{question.img.url}}"></p> {% endif %}
+
+    <!--선택지-->
+    {% for choice in question.choices.all %}
+        <p style="padding-left:20px;">
+                <div class="custom-control custom-radio">
+                    <input id="{{question.question_num}}n{{choice.choice_num}}" type="radio"
+                       name="{{question.question_num}}" value="{{choice.choice_num}}" class="custom-control-input">
+                    <label for="{{question.question_num}}n{{choice.choice_num}}" class="custom-control-label">
+                    {{choice.choice_num}}. {{choice.contents}} {% if choice.img %} <img src="{{choice.img.url}}"> {% endif %}
+                    </label>
+                </div>
+        </p>
+    {% endfor %}
+
+</p>

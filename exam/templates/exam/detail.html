@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
 <h1>{{test.certificate.name}} {{test}}</h1>
 <ul class="nav nav-tabs">
     {% for subject in subjects %}
         <li class="nav-item">
-        <a class="nav-link {%if subject.order is 1%}active{%endif%}" data-toggle="tab" href="#tab{{subject.order}}">{{subject.order}}.{{subject.name}}</a>
+        <a class="nav-link {%if subject.order is subjects.0.order %}active{%endif%}" data-toggle="tab" href="#tab{{subject.order}}">{{subject.order}}.{{subject.name}}</a>
         </li>
     {% endfor %}
 </ul>
@@ -14,36 +13,18 @@
 <form method="post" action="{% url 'exam:report' test.id %}">
     {%csrf_token%}
         <div class="tab-content">
-            {% for subject in subjects %}
-                <div class="tab-pane fade {% if subject.order is 1 %}show active{% endif %}" id="tab{{subject.order}}">
-                    {% for question_set in subject.question_sets %}
-                        <p style="margin-bottom:100px;">
-
-                            <!--문제내용-->
-                            <p>{{question_set.question.question_num}}. {{question_set.question.contents}}</p>
-
-                            <!--그림있으면 그림-->
-                            {% if question_set.question.img %} <p><img src="{{question_set.question.img.url}}"></p> {% endif %}
-
-                            <!--선택지-->
-                            {% for choice in question_set.choices %}
-                                <p style="padding-left:20px;">
-
-                                        <input id="{{question_set.question.question_num}}n{{choice.choice_num}}" type="radio"
-                                               name="{{question_set.question.question_num}}" value="{{choice.choice_num}}">
-                                        <label for="{{question_set.question.question_num}}n{{choice.choice_num}}">
-                                            {{choice.choice_num}}. {{choice.contents}} {% if choice.img %} <img src="{{choice.img.url}}"> {% endif %}
-                                        </label>
-
-                                </p>
-                            {% endfor %}
-
-                        </p>
+            {% for subject,questions in subjects_questions %}
+                <div class="tab-pane fade {% if subject.order is subjects.0.order %}show active{% endif %}" id="tab{{subject.order}}">
+                    {% for question in questions %}
+                        {% include 'question.html'%}
                     {% endfor %}
                 </div>
             {% endfor %}
         </div>
-    <button type="submit">채점하기</button>
+    <div style="text-align:center;">
+        <button type="submit">채점하기</button>
+    </div>
+
 </form>
 
 {% endblock %}
