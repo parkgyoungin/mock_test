@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from .models import Certificate, Test, Question, Choice, Subject
+from django.shortcuts import render, HttpResponse
+from .models import *
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
@@ -17,49 +17,46 @@ def show_detail(request, id):
     subjects = [int(selected) for selected in request.GET]
     request.session['selected_subjects'] = subjects
     test = Test.objects.get(id=id)
+    test.selected_subjects = subjects
 
-    subjects = Subject.objects.filter(certificate_id=test.certificate_id, order__in=subjects).order_by('order')
-    questions = [test.questions.filter(question_num__range=s.range()) for s in subjects]
-    subjects_questions = zip(subjects,questions)
-
-    return render(request, 'exam/detail.html', {'test':test, 'subjects':subjects, 'subjects_questions':subjects_questions})
+    return render(request, 'exam/detail.html', {'test':test})
 
 
 def show_report(request, id):
     if request.method == 'POST':
-        subjects = request.session['selected_subjects']
-        answer = request.POST
         test = Test.objects.get(id=id)
         #session content 만들기 .. 다음뷰에서 저장하면 세션딕셔너리를 그대로 저장.. report 모델에..
+        test.selected_subjects = request.session['selected_subjects']
+        test.marking(request.POST)
 
+        request.session['answer'] = request.POST
 
         return render(request, 'exam/report.html', {'test': test})
     else:
         return HttpResponseRedirect(reverse('exam:detail',args=[id]))
 
+def save_report(request, id):
+    if request.method == 'POST' and request.session['answer']:
+        report = Report(user_id=request.POST['user_id'])
+        report.save()
+
+        test = Test.objects.get(id=id)
+        test.selected_subjects = request.session['selected_subjects']
+        questions = test.get_selected_questions()
+
+        for question in questions:
+            ans = request.session['answer'].get(str(question.question_num))
+            if ans:
+                ans = int(ans)
+            SubmitQuestion(report_id=report.id, question=question, answer=ans).save()
+
+        request.session['answer'] = None
+        return HttpResponse("저장되었습니다.")
+    else:
+        return HttpResponseRedirect(reverse("exam:certificate"))
 
 
-def test_marking(test, answer):
-    test.point = 0
-    test.o = []
-    test.x = []
-    for subject in test.subjects():
-        subject.point = 0
-        subject.o = []
-        subject.x = []
-        for question in subject.questions:
-            user_ans = answer.get(str(question.question_num))
-            if user_ans:
-                question.checked = int(user_ans)
-            if question.answer == None or str(question.answer) != user_ans:
-                subject.x.append(question)
-            else:
-                subject.o.append(question)
-                subject.point += 1
-        test.point += subject.point
-        test.o += subject.o
-        test.x += subject.x
-    return test
+
 
 
 

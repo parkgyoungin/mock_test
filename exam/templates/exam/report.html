@@ -21,6 +21,10 @@
             {% include 'checked_question.html' %}
         {% endif %}
     {% endfor %}
-
+    <form action="{% url 'exam:save' test.id%}" method="post">
+        {% csrf_token %}
+        <input type="hidden"  name="user_id" value="{{user.id}}">
+        <button type="submit">저장하기</button>
+    </form>
 {% endblock %}
 

@@ -1,6 +1,7 @@
 import csv
 import os
 from django.core.files.images import ImageFile
+from exam.models import *
 
 
 def get_csv(path, columns):
@@ -58,7 +59,7 @@ def get_name(path):
     return name1 + '_' + name2 + '.jpg'
 
 def update_model():
-    from exam.models import Certificate, Test, Question, Choice
+
     test_keys = [
         'certificate_id',
         'year',
@@ -114,5 +115,12 @@ def config():
             y+=1
             n=1
 
-
+def test():
+    reports = Report.objects.all()
+    for report in reports:
+        print(report.id,"--"*20)
+        for submitted in report.questions.all():
+            print("%s번문제"%submitted.question.question_num)
+            print("정답 : ",submitted.question.answer)
+            print("내답 : ",submitted.answer,"\n")
 

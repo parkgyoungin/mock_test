@@ -8,4 +8,5 @@ urlpatterns = [
     path('certificate=<int:id>/', show_tests, name='tests'),
     path('test=<int:id>/', show_detail, name='detail'),
     path('report=<int:id>/', show_report, name='report'),
+    path('save=<int:id>/', save_report, name='save')
 ]
